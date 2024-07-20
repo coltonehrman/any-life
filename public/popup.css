@@ -1,0 +1,260 @@
+.popup-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  z-index: 10;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.popup {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.popup-content {
+  color: black;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 400px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.popup-content h2 {
+  margin-top: 0;
+}
+
+.popup-content.success {
+  border: 2px solid #4caf50;
+}
+
+.popup-content.fail {
+  border: 2px solid #f44336;
+}
+
+.popup-content.success h2 {
+  color: #4caf50;
+}
+
+.popup-content.fail h2 {
+  color: #f44336;
+}
+
+.click-to-close {
+  margin-top: 20px;
+  font-size: 16px;
+  color: white;
+}
+
+.popup-box {
+  position: relative;
+  background-color: #444;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 80%;
+  text-align: center;
+  border: 4px solid #ffd700;
+}
+.popup-box h1 {
+  margin: 0 0 10px 0;
+}
+.popup-box p {
+  margin: 0;
+}
+.popup-bottom-text {
+  text-align: center;
+  color: #ffd700;
+  cursor: pointer;
+}
+
+.popup-category {
+  display: block;
+  background-color: #ff5e5e;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.popup-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.popup-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.popup-button {
+  background-color: #2c7cf1;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 5px 0;
+  width: 100%;
+}
+
+.popup-button:hover {
+  background-color: #1a5bb8;
+}
+
+.popup-details {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.popup-detail {
+  display: flex;
+  justify-content: space-between;
+  gap: 3rem;
+  padding: 5px;
+  font-size: 1.25rem;
+  border: 1px solid #444;
+  background-color: #333;
+  margin: 0;
+}
+
+.popup-detail-label {
+  font-weight: bold;
+}
+
+.popup-detail-value {
+  text-align: right;
+}
+
+.popup-stats {
+  text-align: left;
+}
+
+.popup-stat {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.popup-stat-label {
+  flex: 1;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #4caf50;
+}
+
+.popup-form {
+  margin-top: 20px;
+}
+
+.popup-form label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.popup-form select {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
+  color: black;
+}
+
+.popup-form button {
+  padding: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.popup-input-container {
+  margin-bottom: 20px;
+}
+
+.popup-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #444;
+  color: #fff;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.popup-input:focus {
+  border-color: #ffcc00;
+  outline: none;
+}
+
+span.popup-close-button {
+  position: absolute;
+  top: -13px;
+  right: -13px;
+  font-size: 4rem;
+  font-weight: 100;
+  border: 1px solid black;
+  height: 35px;
+  width: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background-color: white;
+  color: red;
+  cursor: pointer;
+}
+
+.popup-progress-container {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.popup-progress-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.popup-progress-label {
+  font-size: 16px;
+  font-weight: bold;
+  flex: 1;
+}
+
+.popup-progress {
+  flex: 3;
+  background-color: #eee;
+  border-radius: 5px;
+  overflow: hidden;
+  height: 20px;
+}
+
+.popup-progress-fill {
+  height: 100%;
+  background-color: #4caf50;
+  border-radius: 5px;
+}

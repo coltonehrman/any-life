@@ -1,0 +1,94 @@
+a {
+  color: white;
+  text-decoration: none;
+}
+
+h4 {
+  text-align: center;
+  color: white;
+  font-size: 5rem;
+  font-weight: bold;
+  margin-bottom: 4rem;
+}
+
+p {
+  font-family: Kameron, sans-serif;
+}
+
+.button {
+  padding: 1.5rem 2.5rem;
+  background-color: grey;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+footer {
+  margin-top: 8rem;
+  padding-bottom: 4rem;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+}
+
+footer h4 {
+  font-weight: bold;
+}
+
+footer .social-links {
+  margin-bottom: 3rem;
+}
+
+footer .social-links img {
+  height: 50px;
+  width: 50px;
+}
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+.popup {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 500px;
+  max-width: 100vw;
+  padding: 20px;
+  text-align: center;
+  z-index: 10;
+}
+
+.popup h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.popup p {
+  color: #666;
+  font-size: 1.5rem;
+  margin: 10px 0;
+}
+
+.popup a {
+  display: inline-block;
+  margin: 10px 5px;
+  padding: 10px 20px;
+  color: #fff;
+  background-color: #007bff;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.popup a:hover {
+  background-color: #0056b3;
+}

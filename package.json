@@ -1,0 +1,36 @@
+{
+  "name": "any-life-io",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc && tailwindcss -i ./public/main.css -o ./public/app.css",
+    "dev": "tsc && npm-run-all --parallel dev:*",
+    "dev:tsc": "tsc --watch",
+    "dev:tailwind": "tailwindcss -i ./public/main.css -o ./public/app.css --watch",
+    "dev:nodemon": "nodemon --delay 1 --watch dist dist/app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "chance": "^1.1.11",
+    "cookie-session": "^2.1.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "humanize-duration": "^3.32.0",
+    "import-jsx": "^5.0.0",
+    "mongodb": "^6.8.0",
+    "nano-jsx": "^0.1.0",
+    "nano-jsx-experiment": "^0.1.1-alpha.1",
+    "openai": "^4.52.0",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4",
+    "npm-run-all": "^4.1.5",
+    "tailwindcss": "^3.4.4",
+    "typescript": "^5.5.2"
+  }
+}
