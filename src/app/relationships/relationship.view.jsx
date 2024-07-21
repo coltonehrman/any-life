@@ -19,14 +19,16 @@ export class RelationshipView extends GamePageView {
 
           <div class="nav-item" onclick="showPopup(event, '#profile-popup')">
             <div class="nav-text">
-              <span class="nav-heading">${npc.name} (${npc.relation ?? "Acquaintance"})</span>
+              <span class="nav-heading">${npc.name} (${
+        npc.relation ?? "Acquaintance"
+      })</span>
               
               <div class="nav-blurb">
                 ${npc.gender} (${npc.age}) - ${npc.cash?.format() ?? "$0"}
               </div>
 
               <div class="nav-blurb">
-                ${npc.profession ?? "None"}
+                ${npc.dead ? "Dead" : npc.profession ?? "None"}
               </div>
 
               <div class="nav-blurb">
@@ -126,7 +128,7 @@ export class RelationshipView extends GamePageView {
                             hx-target="#popup-result"
                             hx-swap="outerHTML"
                           `,
-                          disabled: npc?.actions?.[action.key] !== true,
+                          disabled: npc.dead || npc?.actions?.[action.key] !== true,
                           headingText: action.title,
                           blurbText: action.blurb,
                         })

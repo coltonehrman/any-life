@@ -190,6 +190,12 @@ relationshipRouter.post("/relationship/:id", (req, res) => {
     heading = "Drugs";
 
     body = [`You sold drugs to ${npc.name}.`];
+  } else if (action === "MURDER") {
+    heading = "Murder";
+
+    body = [`You murdered ${npc.name}.`];
+
+    npc.dead = true;
   }
 
   if (outcome) {

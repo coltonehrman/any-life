@@ -15,6 +15,7 @@ class NPC {
   gender = chance.gender();
   age = chance.integer({ min: 0, max: 100 });
   profession = chance.profession({ rank: true });
+  dead = false;
 
   mood = chance.pickone([
     "Happy",
