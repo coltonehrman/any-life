@@ -1,10 +1,11 @@
 import { BillowView } from "./billow/billow.view";
+import Nano from "nano-jsx-experiment";
+import { PopupResult } from "../_shared/components/PopupResult";
 import { PropertyView } from "./property/property.view.js";
+import { RealEstateController } from "./real-estate.controller";
 import { RealEstateView } from "./real-estate.view";
-import { billowProperties } from "./billow/properties.data.js";
 import express from "express";
 import { getPlayerById } from "../player/players.data.js";
-import { html } from "../../utils.js";
 
 const realEstateView = new RealEstateView();
 const billowView = new BillowView();
@@ -31,113 +32,39 @@ realEstateRouter.get("/real-estate/billow", (req, res) => {
   return res.send(billowView.print({ player }));
 });
 
+const BuySuccess = Nano.renderSSR(
+  <PopupResult
+    title="New pad"
+    description="You are now the owner of this sweet pad"
+    redirect="/game/real-estate"
+  />
+);
+
+const BuyFail = Nano.renderSSR(
+  <PopupResult
+    title="Insufficient funds"
+    description="You don't have enough cash to purchase this property."
+  />
+);
+
 realEstateRouter.post("/real-estate/buy", (req, res) => {
   const player = getPlayerById(req.session.playerId);
-  const property = billowProperties.find((p) => p.id === req.body.propertyId);
+  const realEstateController = new RealEstateController();
 
-  if (player.cash.greaterThanOrEqual(property.price)) {
-    player.cash = player.cash.subtract(property.price);
-
-    player.properties.push({
-      ...property,
-      id: crypto.randomUUID(),
-    });
-
-    return res.send(html`
-      <div
-        id="popup-result"
-        style="display: flex;"
-        class="popup-backdrop"
-        data-redirect="/game/real-estate"
-      >
-        <div class="popup-box">
-          <h1 class="popup-title">New pad</h1>
-
-          <p class="popup-description">
-            You are now the owner of this sweet pad.
-          </p>
-
-          <div class="popup-bottom-text">tap anywhere to continue</div>
-        </div>
-      </div>
-    `);
+  if (realEstateController.buy(player, req.body.propertyId)) {
+    return res.send(BuySuccess);
   } else {
-    return res.send(html`
-      <div id="popup-result" style="display: flex;" class="popup-backdrop">
-        <div class="popup-box">
-          <h1 class="popup-title">Insufficient funds</h1>
-
-          <p class="popup-description">
-            You don't have enough cash to purchase this property.
-          </p>
-
-          <div class="popup-bottom-text">tap anywhere to continue</div>
-        </div>
-      </div>
-    `);
+    return res.send(BuyFail);
   }
 });
 
 realEstateRouter.post("/real-estate/mortgage", (req, res) => {
   const player = getPlayerById(req.session.playerId);
-  const property = billowProperties.find((p) => p.id === req.body.propertyId);
+  const realEstateController = new RealEstateController();
 
-  const downPayment = property.price.multiply(0.2);
-
-  if (player.cash.greaterThanOrEqual(downPayment)) {
-    player.cash = player.cash.subtract(downPayment);
-
-    const mortgageTerm = 30; // 30 years
-    const mortgageInterestRate = 5; // 5%
-
-    const mortgageBalance = property.price.subtract(downPayment);
-    let yearlyMortgagePayment = mortgageBalance.divide(mortgageTerm);
-
-    yearlyMortgagePayment = yearlyMortgagePayment.add(
-      mortgageBalance.multiply(mortgageInterestRate / 100)
-    );
-
-    player.properties.push({
-      ...property,
-      id: crypto.randomUUID(),
-      mortgage: {
-        yearsLeft: mortgageTerm,
-        balance: mortgageBalance,
-        yearlyMortgagePayment,
-      },
-    });
-
-    return res.send(html`
-      <div
-        id="popup-result"
-        style="display: flex;"
-        class="popup-backdrop"
-        data-redirect="/game/real-estate"
-      >
-        <div class="popup-box">
-          <h1 class="popup-title">New pad</h1>
-
-          <p class="popup-description">
-            You are now the owner of this sweet pad.
-          </p>
-
-          <div class="popup-bottom-text">tap anywhere to continue</div>
-        </div>
-      </div>
-    `);
+  if (realEstateController.buyWithMortgage(player, req.body.propertyId)) {
+    return res.send(BuySuccess);
   } else {
-    return res.send(html`
-      <div id="popup-result" style="display: flex;" class="popup-backdrop">
-        <div class="popup-box">
-          <h1 class="popup-title">Insufficient funds</h1>
-
-          <p class="popup-description">
-            You don't have enough cash to put down 20% on this property.
-          </p>
-
-          <div class="popup-bottom-text">tap anywhere to continue</div>
-        </div>
-      </div>
-    `);
+    return res.send(BuyFail);
   }
 });
