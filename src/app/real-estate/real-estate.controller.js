@@ -1,3 +1,4 @@
+import { Player } from '../player/player.model';
 import { billowProperties } from "./billow/properties.data";
 
 export class RealEstateController {
@@ -5,6 +6,12 @@ export class RealEstateController {
     return billowProperties.find((p) => p.id === propertyId);
   }
 
+  /**
+   * Buy real estate with cash
+   * @param {Player} player - Player object
+   * @param {string} propertyId - Property ID of property
+   * @return {boolean} true if successful 
+   */
   buy(player, propertyId) {
     const property = this.getPropertyById(propertyId);
 
@@ -22,6 +29,12 @@ export class RealEstateController {
     return false;
   }
 
+  /**
+   * Buy real estate with a mortgage
+   * @param {Player} player - Player object
+   * @param {string} propertyId - Property ID of property
+   * @return {boolean} true if successful 
+   */
   buyWithMortgage(player, propertyId) {
     const property = this.getPropertyById(propertyId);
     const downPayment = property.price.multiply(0.2);
