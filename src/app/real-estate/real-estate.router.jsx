@@ -1,5 +1,4 @@
-import { BillowView } from "./billow/billow.view.js";
-import { Money } from "../items/money.model.js";
+import { BillowView } from "./billow/billow.view";
 import { PropertyView } from "./property/property.view.js";
 import { RealEstateView } from "./real-estate.view";
 import { billowProperties } from "./billow/properties.data.js";
@@ -38,14 +37,19 @@ realEstateRouter.post("/real-estate/buy", (req, res) => {
 
   if (player.cash.greaterThanOrEqual(property.price)) {
     player.cash = player.cash.subtract(property.price);
-    
+
     player.properties.push({
       ...property,
       id: crypto.randomUUID(),
     });
 
     return res.send(html`
-      <div id="popup-result" style="display: flex;" class="popup-backdrop" data-redirect="/game/real-estate">
+      <div
+        id="popup-result"
+        style="display: flex;"
+        class="popup-backdrop"
+        data-redirect="/game/real-estate"
+      >
         <div class="popup-box">
           <h1 class="popup-title">New pad</h1>
 
@@ -76,76 +80,64 @@ realEstateRouter.post("/real-estate/buy", (req, res) => {
 
 realEstateRouter.post("/real-estate/mortgage", (req, res) => {
   const player = getPlayerById(req.session.playerId);
+  const property = billowProperties.find((p) => p.id === req.body.propertyId);
 
-  return res.send(html`
-    <div id="popup-result" style="display: flex;" class="popup-backdrop">
-      <div class="popup-box">
-        <h1 class="popup-title">That Hit The Spot</h1>
-        <p class="popup-subtitle">
-          You enjoyed a Chinese Takeout from Fast-Food.
-        </p>
-        <p class="popup-description">
-          It reminded you of your favorite childhood meal.
-        </p>
+  const downPayment = property.price.multiply(0.2);
 
-        <div class="progress-section">
-          <div class="progress-label">
-            <span>Your Enjoyment</span><span>80%</span>
-          </div>
-          <div class="progress-track">
-            <div class="progress-fill" style="width: 80%;"></div>
-          </div>
-        </div>
+  if (player.cash.greaterThanOrEqual(downPayment)) {
+    player.cash = player.cash.subtract(downPayment);
 
-        <div class="popup-bottom-text">tap anywhere to continue</div>
-      </div>
-    </div>
-  `);
-});
+    const mortgageTerm = 30; // 30 years
+    const mortgageInterestRate = 5; // 5%
 
-realEstateRouter.post("/market/weapons", (req, res) => {
-  const player = getPlayerById(req.session.playerId);
-  const { item } = req.body;
+    const mortgageBalance = property.price.subtract(downPayment);
+    let yearlyMortgagePayment = mortgageBalance.divide(mortgageTerm);
 
-  if (item === "M16") {
-    player.cash = player.cash.subtract(
-      new Money({
-        dollars: 1300,
-      })
+    yearlyMortgagePayment = yearlyMortgagePayment.add(
+      mortgageBalance.multiply(mortgageInterestRate / 100)
     );
 
-    player.items.push({
+    player.properties.push({
+      ...property,
       id: crypto.randomUUID(),
-      type: "WEAPON",
-      name: "M16",
-      cost: new Money({
-        dollars: 1300,
-      }),
+      mortgage: {
+        yearsLeft: mortgageTerm,
+        balance: mortgageBalance,
+        yearlyMortgagePayment,
+      },
     });
-  }
 
-  return res.send(html`
-    <div id="popup-result" style="display: flex;" class="popup-backdrop">
-      <div class="popup-box">
-        <h1 class="popup-title">That Hit The Spot</h1>
-        <p class="popup-subtitle">
-          You enjoyed a Chinese Takeout from Fast-Food.
-        </p>
-        <p class="popup-description">
-          It reminded you of your favorite childhood meal.
-        </p>
+    return res.send(html`
+      <div
+        id="popup-result"
+        style="display: flex;"
+        class="popup-backdrop"
+        data-redirect="/game/real-estate"
+      >
+        <div class="popup-box">
+          <h1 class="popup-title">New pad</h1>
 
-        <div class="progress-section">
-          <div class="progress-label">
-            <span>Your Enjoyment</span><span>80%</span>
-          </div>
-          <div class="progress-track">
-            <div class="progress-fill" style="width: 80%;"></div>
-          </div>
+          <p class="popup-description">
+            You are now the owner of this sweet pad.
+          </p>
+
+          <div class="popup-bottom-text">tap anywhere to continue</div>
         </div>
-
-        <div class="popup-bottom-text">tap anywhere to continue</div>
       </div>
-    </div>
-  `);
+    `);
+  } else {
+    return res.send(html`
+      <div id="popup-result" style="display: flex;" class="popup-backdrop">
+        <div class="popup-box">
+          <h1 class="popup-title">Insufficient funds</h1>
+
+          <p class="popup-description">
+            You don't have enough cash to put down 20% on this property.
+          </p>
+
+          <div class="popup-bottom-text">tap anywhere to continue</div>
+        </div>
+      </div>
+    `);
+  }
 });

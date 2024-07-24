@@ -25,7 +25,7 @@ export class RealEstateView extends GamePageView {
           <div class="section-heading">Markets</div>
 
           <NavItem
-            disabled={player.age < 18}
+            disabled={false && player.age < 18}
             href="/game/real-estate/billow"
             headingText="Billow"
             blurbText="Search for properties on Billow"
