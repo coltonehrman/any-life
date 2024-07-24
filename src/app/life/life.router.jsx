@@ -169,7 +169,7 @@ lifeRouter.post("/life-event", function (req, res) {
 
   generateNewLifeEvent(player, player.age + 1);
 
-  for (const npc of character.allConnections) {
+  for (const npc of player.allConnections) {
     npc.age += 1;
   }
 
