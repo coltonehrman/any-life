@@ -18,7 +18,7 @@ import { savePlayer } from "../../db/utils.js";
 const chance = new Chance();
 
 export class PlayerFactory {
-  static new() {
+  static new({ playerId } = {}) {
     const streetCred = new Map();
 
     streetCred.set(cities[0].hoods[2].streets[0], 2);
@@ -27,6 +27,7 @@ export class PlayerFactory {
 
     const player = new Player({
       id: me.id,
+      playerId: playerId,
       name: me.name,
       gender: me.gender,
       storyLog: [

@@ -30,6 +30,7 @@ export class Player {
 
   constructor({
     id,
+    playerId,
     name,
     health = 100,
     cash,
@@ -48,6 +49,7 @@ export class Player {
     education,
   }) {
     this.id = id;
+    this.playerId = playerId;
     this.name = name;
     this.health = health;
     this.cash = cash;

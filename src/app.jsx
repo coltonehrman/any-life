@@ -1,6 +1,15 @@
 import "dotenv/config";
 
-import { escapeHtml, html } from "./utils";
+import {
+  ActionRowBuilder,
+  Client,
+  Events,
+  GatewayIntentBits,
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle,
+} from "discord.js";
+import { escapeHtml, html, removeCircularReferences } from "./utils";
 import { getPlayerById, players } from "./app/player/players.data.js";
 
 import { ErrorView } from "./views/error.view.js";
@@ -34,6 +43,195 @@ import { realEstateRouter } from "./app/real-estate/real-estate.router.js";
 import { relationshipRouter } from "./app/relationships/relationship.router.js";
 import { saveAccount } from "./db/utils";
 import { workRouter } from "./app/work/work.router.js";
+
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
+});
+
+client.once(Events.ClientReady, async () => {
+  console.log("NPC Bot is online!");
+});
+
+client.on(Events.InteractionCreate, async (interaction) => {
+  // const modal = new ModalBuilder()
+  //   .setCustomId("my_modal")
+  //   .setTitle("Modal title")
+  //   .addComponents(
+  //     new ActionRowBuilder().addComponents(
+  //       new TextInputBuilder()
+  //         .setCustomId("my_text")
+  //         .setStyle(TextInputStyle.Short)
+  //         .setLabel("Type some text")
+  //     ),
+  //     new ActionRowBuilder().addComponents(
+  //       new TextInputBuilder()
+  //         .setCustomId("my_longer_text")
+  //         .setStyle(TextInputStyle.Paragraph)
+  //         .setLabel("Type some (longer) text")
+  //     )
+  //   );
+
+  // return await interaction.showModal(modal);
+
+  if (interaction.commandName === "ping") {
+    return await interaction.reply("Pong!");
+  }
+
+  if (interaction.isCommand()) {
+    if (interaction.commandName === "start") {
+      const player = PlayerFactory.new({
+        playerId: interaction.user.id,
+      });
+
+      players[player.id] = player;
+
+      return await interaction.reply({
+        content: `New player created: ${player.name}\n${player.storyLog.join(
+          "\n"
+        )}`,
+      });
+    }
+
+    if (interaction.commandName === "next-life") {
+      const character = Object.values(players).find(
+        (p) => p.playerId === interaction.user.id
+      );
+
+      character.age += 1;
+
+      character.storyLog.push(`---- Age ${character.age} ----`);
+
+      for (const npc of character.allConnections) {
+        npc.age += 1;
+      }
+
+      return await interaction.reply({
+        content: `My character ${character.name} (${
+          character.age
+        })\n${character.storyLog.join("\n")}`,
+      });
+    }
+  }
+
+  if (interaction.isMessageComponent()) {
+    console.log(interaction);
+    const componentId = interaction.customId;
+
+    if (componentId.startsWith("accept_button_")) {
+      // get the associated game ID
+      const gameId = componentId.replace("accept_button_", "");
+
+      try {
+        // Delete previous message
+        await interaction.message.delete();
+
+        interaction.reply({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          flags: InteractionResponseFlags.EPHEMERAL,
+          content: "What is your object of choice?",
+          components: [
+            {
+              type: MessageComponentTypes.ACTION_ROW,
+              components: [
+                {
+                  type: MessageComponentTypes.STRING_SELECT,
+                  // Append game ID
+                  custom_id: `select_choice_${gameId}`,
+                  options: getShuffledOptions(),
+                },
+              ],
+            },
+          ],
+        });
+      } catch (err) {
+        console.error("Error sending message:", err);
+      }
+    } else if (componentId.startsWith("select_choice_")) {
+      // get the associated game ID
+      const gameId = componentId.replace("select_choice_", "");
+
+      if (activeGames[gameId]) {
+        // Get user ID and object choice for responding user
+        const userId = interaction.member.user.id;
+        console.log(interaction.values);
+        const objectName = interaction.values[0];
+
+        // Calculate result from helper function
+        const resultStr = getResult(activeGames[gameId], {
+          id: userId,
+          objectName,
+        });
+
+        // Remove game from storage
+        delete activeGames[gameId];
+
+        try {
+          // Update ephemeral message
+          await interaction.update({
+            content: "Nice choice " + getRandomEmoji(),
+            components: [],
+          });
+
+          // Send results
+          await interaction.followUp({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            content: resultStr,
+          });
+        } catch (err) {
+          console.error("Error sending message:", err);
+        }
+      }
+    }
+
+    return;
+  }
+
+  const id = interaction.id;
+
+  if (interaction.commandName === "test") {
+    await interaction.reply({
+      content: "hello world " + getRandomEmoji(),
+    });
+  }
+
+  if (id && interaction.commandName === "challenge") {
+    // console.log(interaction)
+    console.log(interaction.member.user.id);
+    const userId = interaction.member.user.id;
+    console.log(interaction.options.get("object"));
+    // User's object choice
+    const objectName = interaction.options.get("object").value;
+
+    // Create active game using message ID as the game ID
+    activeGames[id] = {
+      id: userId,
+      objectName,
+    };
+
+    await interaction.reply({
+      content: `Rock papers scissors challenge from <@${userId}>`,
+      components: [
+        {
+          type: MessageComponentTypes.ACTION_ROW,
+          components: [
+            {
+              type: MessageComponentTypes.BUTTON,
+              custom_id: `accept_button_${id}`,
+              label: "Accept",
+              style: ButtonStyleTypes.PRIMARY,
+            },
+          ],
+        },
+      ],
+    });
+  }
+});
+
+// client.login(process.env.DISCORD_TOKEN);
 
 process.on("uncaughtException", function (exception) {
   console.error(exception); // to see your exception details in the console

@@ -169,31 +169,7 @@ lifeRouter.post("/life-event", function (req, res) {
 
   generateNewLifeEvent(player, player.age + 1);
 
-  for (const type of Object.keys(player.family)) {
-    const members = player.family[type] ?? [];
-    for (const person of members) {
-      person.age += 1;
-    }
-  }
-
-  const npcs = player.contacts
-    .concat(player.education?.kindergarden?.students ?? [])
-    .concat(player.education?.kindergarden?.faculty ?? [])
-    .concat(player.education?.elementary?.students ?? [])
-    .concat(player.education?.elementary?.faculty ?? [])
-    .concat(player.education?.middleschool?.students ?? [])
-    .concat(player.education?.middleschool?.faculty ?? [])
-    .concat(player.education?.highschool?.students ?? [])
-    .concat(player.education?.highschool?.faculty ?? [])
-    .concat(player.education?.university?.students ?? [])
-    .concat(player.education?.university?.faculty ?? [])
-    .concat(
-      player.jobs
-        .filter((j) => j.type === "Full-Time")
-        .flatMap((j) => j.employees) ?? []
-    );
-
-  for (const npc of npcs) {
+  for (const npc of character.allConnections) {
     npc.age += 1;
   }
 
