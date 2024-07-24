@@ -14,7 +14,7 @@ export class ActivitiesView extends GamePageView {
           <div class="section-heading">Activities</div>
 
           <NavItem
-            disabled={false && player.age < 12}
+            disabled={player.age < 12}
             hx-post="/game/activities/gym"
             hx-target="#popup-result"
             hx-swap="outerHTML"
