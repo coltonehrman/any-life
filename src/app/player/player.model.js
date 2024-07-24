@@ -15,6 +15,9 @@ export class Player {
   storyLog = [];
   family = null;
   lastActive = Date.now();
+  attributes = {
+    strength: 10,
+  };
   happiness = 100;
   health = 100;
   age = 0;
